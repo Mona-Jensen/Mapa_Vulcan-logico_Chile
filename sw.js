@@ -1,4 +1,4 @@
-const CACHE_NAME = 'volcanes-cl-v3';
+const CACHE_NAME = 'volcanes-cl-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

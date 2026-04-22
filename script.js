@@ -247,11 +247,11 @@ function showVolcanoDetails(volcano) {
                 </div>
             </div>
 
-            <div class="section-title">Cámaras FIRMS / En Vivo</div>
-            <div class="webcam-preview">
-                <div class="live-tag">FIRMS</div>
-                <span>CONECTANDO NASA API...</span>
-            </div>
+            <div class="section-title">Red de Cámaras (RNVV)</div>
+            <a href="https://rnvv.sernageomin.cl/${volcano.name.toLowerCase().replace(/ /g, '-')}/" target="_blank" class="webcam-preview" style="text-decoration: none; cursor: pointer;">
+                <div class="live-tag">OFICIAL</div>
+                <span style="color: white; text-align: center;">Haz clic para ver transmisión<br>en Sernageomin</span>
+            </a>
 
             <div class="sidebar-actions" style="display: flex; gap: 10px; margin-top: 30px;">
                 <button class="routing-btn" style="flex: 1;" onclick="routeToSafeZone([${volcano.coordinates}])">
