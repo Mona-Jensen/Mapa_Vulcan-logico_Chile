@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const CACHE_NAME = 'volcanes-cl-v5';
+=======
+const CACHE_NAME = 'volcanes-cl-v4';
+>>>>>>> 60296f21d491d7b85805034e14bbd3534b23a699
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

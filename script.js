@@ -247,6 +247,7 @@ function showVolcanoDetails(volcano) {
                 </div>
             </div>
 
+<<<<<<< HEAD
             <div class="section-title">Satélite GOES-16 (Atmósfera)</div>
             <div class="webcam-preview" style="position: relative; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.1);">
                 <img src="https://mesonet.agron.iastate.edu/cgi-bin/wms/goes/global_ir.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=goes_global_ir&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=false&HEIGHT=300&WIDTH=400&SRS=EPSG%3A4326&BBOX=${volcano.coordinates[1] - 1.5},${volcano.coordinates[0] - 1.0},${volcano.coordinates[1] + 1.5},${volcano.coordinates[0] + 1.0}" 
@@ -255,6 +256,13 @@ function showVolcanoDetails(volcano) {
                 <div class="live-tag" style="background: rgba(0, 188, 212, 0.8);">SATELLITE</div>
                 <div style="position: absolute; bottom: 5px; right: 10px; font-size: 10px; color: rgba(255,255,255,0.5);">NOAA / IEM</div>
             </div>
+=======
+            <div class="section-title">Red de Cámaras (RNVV)</div>
+            <a href="https://rnvv.sernageomin.cl/${volcano.name.toLowerCase().replace(/ /g, '-')}/" target="_blank" class="webcam-preview" style="text-decoration: none; cursor: pointer;">
+                <div class="live-tag">OFICIAL</div>
+                <span style="color: white; text-align: center;">Haz clic para ver transmisión<br>en Sernageomin</span>
+            </a>
+>>>>>>> 60296f21d491d7b85805034e14bbd3534b23a699
 
             <div class="section-title">Cámaras Oficiales (Sernageomin)</div>
             <a href="https://rnvv.sernageomin.cl/${volcano.name.toLowerCase().replace(/ /g, '-')}/" target="_blank" class="sidebar-actions" style="text-decoration: none; margin-top: 10px; display: block;">
