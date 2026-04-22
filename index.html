@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chile Volcánico | Monitoreo y Prevención</title>
+    <meta name="description" content="Mapa interactivo de la red de vigilancia volcánica de Chile. Consulta alertas, riesgos y zonas de evacuación.">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff5e00">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/820/820120.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- html2pdf para exportar a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <span class="lava-icon">🌋</span>
+            <h1>Chile Volcánico</h1>
+        </div>
+        <div class="header-controls">
+            <div class="search-container">
+                <input type="text" id="volcanoSearch" placeholder="Buscar en los 14 prioritarios...">
+            </div>
+            
+            <div class="system-status" id="systemStatus" title="Estado de la conexión">
+                <span class="status-dot"></span> <span class="status-text">Conectado</span>
+            </div>
+
+            <button class="icon-btn" id="btnGeolocation" title="Mi Ubicación">📍</button>
+            <button class="icon-btn" id="btnPdf" title="Exportar Reporte PDF">📄</button>
+            <button class="icon-btn" id="btnTheme" title="Alternar Tema">🌓</button>
+            <button class="icon-btn" id="btnSound" title="Silenciar Alertas">🔊</button>
+            <button class="icon-btn" id="btnTogglePanel" title="Ocultar/Mostrar Panel">📋</button>
+            
+            <div class="stats-overview">
+                <div class="stat-item" id="alertCounter">
+                    <span class="label">Alertas:</span>
+                    <span class="value">0 de 14</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Panel Izquierdo: Lista de 14 Volcanes -->
+        <aside class="left-panel glass" id="priorityPanel">
+            <div class="panel-header">
+                <h2>14 Volcanes Prioritarios</h2>
+                <button id="btnViewAll" class="view-all-btn">Ver Todos</button>
+            </div>
+            <div class="last-update" id="lastUpdate">Actualizando datos...</div>
+            <ul class="volcano-list" id="volcanoList">
+                <!-- Se llenará dinámicamente con JS -->
+            </ul>
+        </aside>
+
+        <div id="map-container">
+            <div id="map"></div>
+            <!-- Leyenda de colores -->
+            <div class="map-legend glass" id="mapLegend">
+                <h4>Nivel de Alerta</h4>
+                <div class="legend-item"><span class="color-box" style="background: var(--accent-verde);"></span> Verde (Normal)</div>
+                <div class="legend-item"><span class="color-box" style="background: var(--accent-amarilla);"></span> Amarilla (Inestable)</div>
+                <div class="legend-item"><span class="color-box" style="background: var(--accent-naranja);"></span> Naranja (Probable erupción)</div>
+                <div class="legend-item"><span class="color-box" style="background: var(--accent-roja);"></span> Roja (Erupción inminente/en curso)</div>
+            </div>
+        </div>
+        
+        <aside class="sidebar glass" id="sidebar">
+            <button class="close-sidebar" id="closeSidebar">×</button>
+            <div class="sidebar-content" id="sidebarContent">
+                <div class="welcome-msg">
+                    <h2>Bienvenido</h2>
+                    <p>Selecciona un volcán en el mapa para ver su estado de monitoreo, ranking de riesgo y zonas de evacuación.</p>
+                </div>
+            </div>
+            
+            <div class="layer-controls">
+                <h3>Capas de Información</h3>
+                <label class="switch-container">
+                    <input type="checkbox" id="toggleEvacuation" checked>
+                    <span class="slider"></span>
+                    Zonas de Riesgo
+                </label>
+                <label class="switch-container" style="margin-top: 10px;">
+                    <input type="checkbox" id="toggleCuencas" checked>
+                    <span class="slider"></span>
+                    Cuencas Hidrográficas
+                </label>
+                <label class="switch-container" style="margin-top: 10px;">
+                    <input type="checkbox" id="toggleFirms" checked>
+                    <span class="slider"></span>
+                    Satélite Térmico (NASA)
+                </label>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="main-footer glass">
+        <p>Datos de referencia basados en la Red Nacional de Vigilancia Volcánica (RNVV)</p>
+    </footer>
+
+    <!-- Notificación emergente -->
+    <div id="toastNotification" class="toast hidden">
+        <div class="toast-content">
+            <span class="toast-icon">⚠️</span>
+            <div class="toast-text">
+                <strong id="toastTitle">Cambio de Alerta</strong>
+                <p id="toastMessage">Mensaje</p>
+            </div>
+        </div>
+        <button class="toast-close" id="toastClose">×</button>
+    </div>
+
+    <!-- Audio de alerta -->
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="script.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

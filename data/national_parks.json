@@ -1,0 +1,68 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Parque Nacional Villarrica",
+        "description": "Protege los volcanes Villarrica, Quetrupillán y Lanín. Paisaje dominado por araucarias.",
+        "type": "Parque Nacional"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-71.95, -39.35],
+            [-71.80, -39.35],
+            [-71.75, -39.45],
+            [-71.85, -39.55],
+            [-71.98, -39.52],
+            [-71.95, -39.35]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Parque Nacional Vicente Pérez Rosales",
+        "description": "Incluye el Volcán Osorno y los Saltos del Petrohué. Es el parque más antiguo de Chile.",
+        "type": "Parque Nacional"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.60, -41.05],
+            [-72.30, -41.00],
+            [-72.15, -41.10],
+            [-72.25, -41.25],
+            [-72.50, -41.30],
+            [-72.60, -41.05]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Parque Nacional Conguillío",
+        "description": "Llamado 'Los Paraguas' por sus araucarias. Rodea el imponente volcán Llaima.",
+        "type": "Parque Nacional"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-71.85, -38.60],
+            [-71.65, -38.55],
+            [-71.55, -38.70],
+            [-71.60, -38.85],
+            [-71.80, -38.80],
+            [-71.85, -38.60]
+          ]
+        ]
+      }
+    }
+  ]
+}

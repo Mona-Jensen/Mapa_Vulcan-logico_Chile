@@ -1,0 +1,43 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cuenca del Río Toltén",
+        "description": "Cuenca hídrica de gran relevancia en La Araucanía. Incluye al lago Villarrica y es susceptible a lahares del volcán Villarrica."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.0, -39.2],
+            [-71.5, -39.2],
+            [-71.5, -39.6],
+            [-72.0, -39.6],
+            [-72.0, -39.2]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cuenca del Río Trancura",
+        "description": "Afluente principal del lago Villarrica, cruza zonas de alto riesgo volcánico."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-71.8, -39.3],
+            [-71.6, -39.3],
+            [-71.6, -39.5],
+            [-71.8, -39.5],
+            [-71.8, -39.3]
+          ]
+        ]
+      }
+    }
+  ]
+}

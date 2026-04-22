@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "volcano": "Villarrica",
+        "type": "Zona de Exclusión",
+        "danger_level": "Alto",
+        "description": "Radio de 500m desde el centro del cráter activo."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-71.935, -39.415],
+            [-71.925, -39.415],
+            [-71.925, -39.425],
+            [-71.935, -39.425],
+            [-71.935, -39.415]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "volcano": "Villarrica",
+        "type": "Punto de Encuentro",
+        "name": "Zona Segura Pucón",
+        "description": "Estadio Municipal de Pucón"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.97, -39.28]
+      }
+    }
+  ]
+}
