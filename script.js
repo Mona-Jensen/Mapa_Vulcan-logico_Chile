@@ -605,3 +605,70 @@ setTimeout(function() {
         }
     }
 }, 2000); // Esperar 2 segundos a que el mapa cargue
+
+// ========== RECUADRO SATELITAL EN VIVO ==========
+function addSatelliteBox() {
+    // Crear el contenedor del recuadro
+    var satelliteBox = document.createElement('div');
+    satelliteBox.id = 'satelliteBox';
+    satelliteBox.style.position = 'absolute';
+    satelliteBox.style.bottom = '20px';
+    satelliteBox.style.left = '20px';
+    satelliteBox.style.zIndex = '1000';
+    satelliteBox.style.width = '280px';
+    satelliteBox.style.background = 'rgba(0,0,0,0.8)';
+    satelliteBox.style.borderRadius = '12px';
+    satelliteBox.style.border = '1px solid rgba(255,255,255,0.2)';
+    satelliteBox.style.overflow = 'hidden';
+    satelliteBox.style.fontFamily = 'sans-serif';
+    
+    satelliteBox.innerHTML = `
+        <div style="padding: 8px 12px; background: #1a252f; color: white; font-size: 12px; font-weight: bold;">
+            🛰️ GOES-19 - Imagen Satelital en Vivo
+            <span style="float: right; font-size: 10px; color: #aaa;" id="satelliteTime">Actualizando...</span>
+        </div>
+        <div style="position: relative;">
+            <img id="satelliteImage" 
+                 src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/south_america/GEOCOLOR/GOES19_SOUTH_AMERICA_GEOCOLOR_1080x1080.jpg" 
+                 style="width: 100%; height: auto; display: block;"
+                 onerror="this.src='https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=southam&band=GeoColor&format=gif&width=400'">
+            <div style="position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; font-size: 9px; color: white;">
+                🌎 Chile visible
+            </div>
+        </div>
+        <div style="padding: 6px 12px; background: #0d151c; color: #aaa; font-size: 10px; text-align: center;">
+            Actualización automática cada 15 minutos | NOAA GOES-19
+        </div>
+    `;
+    
+    // Agregar al mapa
+    var mapContainer = document.getElementById('map');
+    if (mapContainer) {
+        mapContainer.style.position = 'relative';
+        mapContainer.appendChild(satelliteBox);
+        console.log('✅ Recuadro satelital agregado');
+    }
+    
+    // Función para actualizar la imagen cada 15 minutos
+    function updateSatelliteImage() {
+        var img = document.getElementById('satelliteImage');
+        var timeSpan = document.getElementById('satelliteTime');
+        if (img) {
+            // Agregar timestamp para evitar caché
+            var timestamp = new Date().getTime();
+            img.src = `https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/south_america/GEOCOLOR/GOES19_SOUTH_AMERICA_GEOCOLOR_1080x1080.jpg?t=${timestamp}`;
+            if (timeSpan) {
+                timeSpan.innerHTML = new Date().toLocaleTimeString();
+            }
+        }
+    }
+    
+    // Actualizar cada 15 minutos
+    setInterval(updateSatelliteImage, 15 * 60 * 1000);
+    
+    // Actualizar inmediatamente al cargar
+    setTimeout(updateSatelliteImage, 1000);
+}
+
+// Llamar a la función después de que el mapa esté listo
+setTimeout(addSatelliteBox, 2000);
