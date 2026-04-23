@@ -79,6 +79,41 @@ function initMap() {
         transparent: true,
         attribution: 'NASA FIRMS'
     }).addTo(map);
+
+    // Agregar control satelital GOES-19
+    addSatelliteControl();
+}
+
+// Función para agregar control satelital GOES-19
+function addSatelliteControl() {
+    const SatelliteControl = L.Control.extend({
+        onAdd: function(map) {
+            const div = L.DomUtil.create('div', 'satellite-control');
+            div.innerHTML = `
+                <div style="background:rgba(26, 37, 47, 0.9); backdrop-filter: blur(5px); color:white; padding:12px; border-radius:10px; text-align:center; min-width:220px; box-shadow:0 2px 10px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
+                    <strong style="font-size:14px;">🛰️ GOES-19 (NOAA)</strong>
+                    <div style="margin-top:10px;">
+                        <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector.php?sat=G19&sector=southam', '_blank')" 
+                                style="background:#0066cc; border:none; color:white; padding:6px 12px; margin:3px; border-radius:5px; cursor:pointer; font-size:11px; transition: 0.3s;">
+                            🌎 Sudamérica
+                        </button>
+                        <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=CONUS&band=GeoColor&length=24', '_blank')" 
+                                style="background:#2e7d32; border:none; color:white; padding:6px 12px; margin:3px; border-radius:5px; cursor:pointer; font-size:11px; transition: 0.3s;">
+                            🎨 Color Real
+                        </button>
+                        <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=southam&band=Band13&length=24', '_blank')" 
+                                style="background:#e74c3c; border:none; color:white; padding:6px 12px; margin:3px; border-radius:5px; cursor:pointer; font-size:11px; transition: 0.3s;">
+                            🔥 Infrarrojo
+                        </button>
+                    </div>
+                    <p style="font-size:10px; margin:8px 0 0 0; color:#aaa;">Actualizado cada 10-15 min | GOES-19</p>
+                </div>
+            `;
+            return div;
+        }
+    });
+    
+    new SatelliteControl({ position: 'bottomright' }).addTo(map);
 }
 
 async function loadData() {
@@ -247,33 +282,20 @@ function showVolcanoDetails(volcano) {
                 </div>
             </div>
 
-<<<<<<< HEAD
-            <div class="section-title">Satélite GOES-16 (Atmósfera)</div>
-            <div class="webcam-preview" style="position: relative; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.1);">
+            <div class="section-title">Satélite GOES-16 (S3 NOAA)</div>
+            <div class="webcam-preview" style="position: relative; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.1); height: 220px;">
                 <img src="https://mesonet.agron.iastate.edu/cgi-bin/wms/goes/global_ir.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=goes_global_ir&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=false&HEIGHT=300&WIDTH=400&SRS=EPSG%3A4326&BBOX=${volcano.coordinates[1] - 1.5},${volcano.coordinates[0] - 1.0},${volcano.coordinates[1] + 1.5},${volcano.coordinates[0] + 1.0}" 
                      alt="Satélite GOES-16" 
-                     style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
-                <div class="live-tag" style="background: rgba(0, 188, 212, 0.8);">SATELLITE</div>
-                <div style="position: absolute; bottom: 5px; right: 10px; font-size: 10px; color: rgba(255,255,255,0.5);">NOAA / IEM</div>
+                     style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
+                <div class="live-tag" style="background: #e91e63;">📡 AWS S3 LIVE</div>
+                <div id="satelliteMeta" style="position: absolute; bottom: 5px; left: 10px; font-size: 9px; color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 3px;">
+                    Sincronizando con noaa-goes16...
+                </div>
             </div>
-=======
-            <div class="section-title">Red de Cámaras (RNVV)</div>
-            <a href="https://rnvv.sernageomin.cl/${volcano.name.toLowerCase().replace(/ /g, '-')}/" target="_blank" class="webcam-preview" style="text-decoration: none; cursor: pointer;">
-                <div class="live-tag">OFICIAL</div>
-                <span style="color: white; text-align: center;">Haz clic para ver transmisión<br>en Sernageomin</span>
-            </a>
->>>>>>> 60296f21d491d7b85805034e14bbd3534b23a699
-
-            <div class="section-title">Cámaras Oficiales (Sernageomin)</div>
-            <a href="https://rnvv.sernageomin.cl/${volcano.name.toLowerCase().replace(/ /g, '-')}/" target="_blank" class="sidebar-actions" style="text-decoration: none; margin-top: 10px; display: block;">
-                <button class="routing-btn" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                    📺 Abrir Transmisión RNVV
-                </button>
-            </a>
 
             <div class="sidebar-actions" style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="routing-btn" style="flex: 1;" onclick="routeToSafeZone([${volcano.coordinates}])">
-                    🚑 Evacuación
+                    🚑 Protocolo de Evacuación
                 </button>
             </div>
         </div>

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const CACHE_NAME = 'volcanes-cl-v5';
-=======
-const CACHE_NAME = 'volcanes-cl-v4';
->>>>>>> 60296f21d491d7b85805034e14bbd3534b23a699
+const CACHE_NAME = 'volcanes-cl-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -12,6 +8,7 @@ const ASSETS_TO_CACHE = [
   './data/volcanoes.json',
   './data/evacuation_zones.json',
   './data/national_parks.json',
+  './data/cuencas.json',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap'
@@ -39,9 +36,7 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Return cached response if found, else fetch from network
         return cachedResponse || fetch(event.request).then(response => {
-            // Si es la API de JSON, la guardamos en cache para offline
             if(event.request.url.includes('data/')) {
                 const responseClone = response.clone();
                 caches.open(CACHE_NAME).then(cache => {
@@ -50,7 +45,6 @@ self.addEventListener('fetch', event => {
             }
             return response;
         }).catch(() => {
-            // Si falla la red, intentar devolver la ultima versión en caché de JSON
             if(event.request.url.includes('data/')) {
                  return caches.match(event.request);
             }
