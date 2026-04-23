@@ -82,6 +82,9 @@ function initMap() {
 
     // Agregar control satelital GOES-19
     addSatelliteControl();
+    
+    // Agregar control de Cuencas Hidrográficas
+    setupCuencasControl();
 }
 
 // Función para agregar control satelital GOES-19
@@ -240,18 +243,91 @@ function initParksLayer(geojsonData) {
 }
 
 function initCuencasLayer(geojsonData) {
+    // --- Estilo diferenciado para cuencas y subcuencas ---
+    function getStyle(feature) {
+        // Detectar si es una cuenca principal (asumiendo que el JSON tiene una propiedad 'level')
+        const isMainBasin = feature.properties.level === 1 || feature.properties.area > 1000; 
+        
+        if (isMainBasin) {
+            return {
+                color: '#0066cc',       // Azul fuerte
+                weight: 3,              // Borde grueso
+                fillColor: '#3399ff',   
+                fillOpacity: 0.15,      // Relleno suave
+                opacity: 0.9
+            };
+        } else {
+            return {
+                color: '#66ccff',       // Azul claro
+                weight: 1.5,            // Borde fino
+                fillColor: '#99ddff',
+                fillOpacity: 0.05,      // Casi transparente
+                opacity: 0.6,
+                dashArray: '5, 8'       // Línea punteada para subcuencas
+            };
+        }
+    }
+
+    // --- Crear la capa con el estilo ---
     cuencasLayer = L.geoJSON(geojsonData, {
-        style: {
-            color: '#00bcd4',
-            weight: 2,
-            fillColor: '#00bcd4',
-            fillOpacity: 0.15,
-            dashArray: '4, 4'
-        },
+        style: getStyle,
         onEachFeature: (feature, layer) => {
-            layer.bindPopup(`<strong>💧 ${feature.properties.name}</strong><br><small>${feature.properties.description}</small>`);
+            // Popup informativo
+            const nombre = feature.properties.name || 'Sin nombre';
+            const tipo = feature.properties.level === 1 ? 'Cuenca Principal' : 'Subcuenca';
+            layer.bindPopup(`
+                <strong>💧 ${nombre}</strong><br>
+                <small>${tipo}</small><br>
+                <small>Superficie: ${feature.properties.area || 'N/A'} km²</small>
+            `);
         }
     }).addTo(map);
+}
+
+function setupCuencasControl() {
+    // Crear un control personalizado (esto genera un botón flotante)
+    const CuencasControl = L.Control.extend({
+        options: {
+            position: 'topright' // Posición del botón
+        },
+        onAdd: function() {
+            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            div.innerHTML = '💧 Cuencas';
+            div.style.backgroundColor = '#1a252f';
+            div.style.color = 'white';
+            div.style.padding = '8px 12px';
+            div.style.cursor = 'pointer';
+            div.style.fontSize = '14px';
+            div.style.fontWeight = 'bold';
+            div.style.borderRadius = '4px';
+            div.style.border = '2px solid #0066cc';
+            
+            // Evitar que el clic en el botón también afecte al mapa
+            L.DomEvent.disableClickPropagation(div);
+            
+            // --- Acción del botón: Centrar el mapa en las cuencas ---
+            div.onclick = () => {
+                // Opción A: Si la capa existe, centrar el mapa en los límites de las cuencas
+                if (cuencasLayer && typeof cuencasLayer.getBounds === 'function') {
+                    const bounds = cuencasLayer.getBounds();
+                    if (bounds.isValid()) {
+                        map.fitBounds(bounds);
+                        
+                        // Efecto visual de notificación
+                        div.style.backgroundColor = '#0066cc';
+                        setTimeout(() => { div.style.backgroundColor = '#1a252f'; }, 300);
+                    }
+                } else {
+                    alert('Cargando datos de cuencas...');
+                }
+            };
+            
+            return div;
+        }
+    });
+    
+    // Agregar el control al mapa
+    new CuencasControl().addTo(map);
 }
 
 function showVolcanoDetails(volcano) {
@@ -563,48 +639,7 @@ function routeToSafeZone(coords) {
     alert("Calculando ruta de evacuación hacia el punto seguro más cercano...");
 }
 
-// ========== BOTÓN SATELITAL SIMPLE (FALLBACK) ==========
-setTimeout(function() {
-    // Verificar si ya existe un control satelital
-    if (!document.querySelector('.satellite-control')) {
-        console.log("Agregando botón satelital manualmente...");
-        
-        // Crear el div del botón
-        var satelliteDiv = document.createElement('div');
-        satelliteDiv.className = 'satellite-control';
-        satelliteDiv.style.position = 'absolute';
-        satelliteDiv.style.bottom = '20px';
-        satelliteDiv.style.right = '20px';
-        satelliteDiv.style.zIndex = '1000';
-        satelliteDiv.innerHTML = `
-            <div style="background:rgba(26, 37, 47, 0.95); backdrop-filter: blur(5px); color:white; padding:10px; border-radius:10px; text-align:center; min-width:200px; box-shadow:0 2px 10px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);">
-                <strong style="font-size:13px;">🛰️ GOES-19 NOAA</strong>
-                <div style="margin-top:8px;">
-                    <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector.php?sat=G19&sector=southam', '_blank')" 
-                            style="background:#0066cc; border:none; color:white; padding:5px 10px; margin:2px; border-radius:4px; cursor:pointer; font-size:11px;">
-                        🌎 Chile
-                    </button>
-                    <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=CONUS&band=GeoColor&length=24', '_blank')" 
-                            style="background:#2e7d32; border:none; color:white; padding:5px 10px; margin:2px; border-radius:4px; cursor:pointer; font-size:11px;">
-                        🎨 Color
-                    </button>
-                    <button onclick="window.open('https://www.star.nesdis.noaa.gov/GOES/sector_band.php?sat=G19&sector=southam&band=Band13&length=24', '_blank')" 
-                            style="background:#e74c3c; border:none; color:white; padding:5px 10px; margin:2px; border-radius:4px; cursor:pointer; font-size:11px;">
-                        🔥 IR
-                    </button>
-                </div>
-                <p style="font-size:9px; margin:5px 0 0 0; color:#aaa;">Actualizado 10-15 min</p>
-            </div>
-        `;
-        
-        // Agregar al mapa (buscar el contenedor del mapa)
-        var mapContainer = document.getElementById('map');
-        if (mapContainer) {
-            mapContainer.appendChild(satelliteDiv);
-            console.log("✅ Botón satelital agregado manualmente");
-        }
-    }
-}, 2000); // Esperar 2 segundos a que el mapa cargue
+
 
 // ========== RECUADRO SATELITAL EN VIVO ==========
 function addSatelliteBox() {
